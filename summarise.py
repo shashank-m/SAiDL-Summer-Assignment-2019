@@ -13,7 +13,7 @@ x=pd.read_csv('articles.csv')
 
 cols=x.columns
 
-regex='[^A-Za-z]'
+regex='[^A-Za-z]' # all characters that don't belong in A-Z or a-z.
 
 word_embeddings = {}
 f = open('glove.6B.100d.txt', encoding='utf-8')
@@ -24,15 +24,14 @@ for line in f:
     word_embeddings[word]=embedding_for_word
     
 f.close()
-
-for row in x.itertuples():
+for row in x.itertuples(): # each row contains data for a article.
     
     claps=row[2]
     article=row[6]
     title=row[5]
 
-    sentences=sent_tokenize(article)[:-2]
-    new_sentences=[re.sub(regex,' ',i) for i in sentences] 
+    sentences=sent_tokenize(article)[:-2] # last two sentences are generally common to all articles and not an integral part to the summary.
+    new_sentences=[re.sub(regex,' ',i) for i in sentences] #replace special chars with blank space.
     clean_sentences = [s.lower() for s in new_sentences]
     
     # remove stop words.
@@ -57,11 +56,10 @@ for row in x.itertuples():
             try:
                 embedding_of_w=word_embeddings[w]
                 sum_array+=embedding_of_w
-            except KeyError:
+            except KeyError: # for out of vocabulary words.
                 embedding_of_w=np.random.randn(100)
                 sum_array+=embedding_of_w
-                # print(embedding_of_w.size)
-
+        # average of all word embeddings in each sentence.
         embed_of_sentence=sum_array/(num_words+0.001) 
         embedded_sentences.append(embed_of_sentence)
     
@@ -74,18 +72,15 @@ for row in x.itertuples():
 
     nx_graph = nx.from_numpy_array(sim_mat)
     scores = nx.pagerank(nx_graph)
-    # ranked_sentences = sorted(((scores[i],s) for i,s in enumerate(embedded_sentences)))
-
+    
     sorted_scores=set()
     for i,s in enumerate(clean_sentences):
         s_c=scores[i]
         sorted_scores.add((s_c,s))
         
     m=sorted(sorted_scores,reverse=True)  
-    for i in range(4):
+    for i in range(6): # 6 represents top 6 sentences.
         print(m[i][1],'\n')  
         
-    # print(sorted_scores[:10])
-            
-    
-    break                   
+                
+                     
