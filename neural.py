@@ -3,6 +3,10 @@ import random
 import matplotlib.pyplot as plt
 xy=0
 def create_dataset(rows,columns):
+    """
+    Creates a dataset which contains one hot encoding of the two two bit binary numbers along with 
+    the third input(0 or 1) and also a one hot encoding of the output.
+    """
     X_list=[]
     y_list=[]
     for i in range(columns):
@@ -24,6 +28,9 @@ def create_dataset(rows,columns):
     Y=np.array(y_list).T
     return X,Y
 def initialise_parameters(n_x,n_y,n_h):
+    """
+    initialise random values to weights.
+    """
     w1=np.random.randn(n_h,n_x)*0.01
     b1=np.zeros((n_h,1))
     w2=np.random.randn(n_y,n_h)*0.01
@@ -73,7 +80,7 @@ def accuracy(prediction,Y,m,s):
 
 #####################################################################
 X_o,Y_o=create_dataset(5,50)   
-X=X_o[:,:40]
+X=X_o[:,:40] # splitting data set into train and test on 80:20 ratio.
 # print(X.shape)
 Y=Y_o[:,:40]
 X_test=X_o[:,40:]
@@ -100,17 +107,15 @@ for i in range(epochs):
     w2 -= alpha*dw2
     b1 -= alpha*db1
     b2 -= alpha*db2
+    # cross entropy loss function.
     logprobs = np.multiply(np.log(a2), Y) + np.multiply((1 - Y), np.log(1 - a2))
     c = - np.sum(logprobs) / m
     cost.append(c)
 
-# plotting loss.
+# plotting loss vs epochs.
 x=list(range(epochs))
 plt.plot(x,cost)
 plt.show()
-
-
-
 
     
 prediction=a2
