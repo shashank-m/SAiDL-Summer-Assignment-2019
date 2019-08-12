@@ -1,5 +1,6 @@
 import numpy as np    
 import random
+import matplotlib.pyplot as plt
 xy=0
 def create_dataset(rows,columns):
     X_list=[]
@@ -40,9 +41,7 @@ def forward_prop(X,w1,w2,predict):
     else:    
         return z1,a1,z2,a2
 def back_prop(a1,a2,Y,m):
-    """
-    noice.
-    """
+    
     dz2= a2 - Y
     dw2 = (1 / m) * np.dot(dz2, a1.T)
     db2 = (1 / m) * np.sum(dz2, axis=1, keepdims=True)
@@ -84,14 +83,13 @@ Y_test=Y_o[:,40:]
 m=X.shape[1]
 m_test=X_test.shape[1]
 n_x=X.shape[0]
-print(n_x)
 n_y=Y.shape[0]
 n_h=5
 epochs=3000
 alpha=0.1
 
 w1,b1,w2,b2=initialise_parameters(n_x,n_y,n_h)  
-
+cost=[]
 for i in range(epochs):
    
     z1,a1,z2,a2=forward_prop(X,w1,w2,False)
@@ -102,6 +100,18 @@ for i in range(epochs):
     w2 -= alpha*dw2
     b1 -= alpha*db1
     b2 -= alpha*db2
+    logprobs = np.multiply(np.log(a2), Y) + np.multiply((1 - Y), np.log(1 - a2))
+    c = - np.sum(logprobs) / m
+    cost.append(c)
+
+# plotting loss.
+x=list(range(epochs))
+plt.plot(x,cost)
+plt.show()
+
+
+
+
     
 prediction=a2
 prediction[prediction<0.5]=0
@@ -112,7 +122,6 @@ accuracy(prediction,Y,m,'train')
 output=forward_prop(X_test,w1,w2,True) 
 output[output<0.5]=0
 output[output>=0.5]=1
-# print(output)
 accuracy(output,Y_test,m_test,'test')      
 
     
