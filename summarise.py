@@ -63,7 +63,7 @@ for row in x.itertuples(): # each row contains data for a article.
         embed_of_sentence=sum_array/(num_words+0.001) 
         embedded_sentences.append(embed_of_sentence)
     
-    # prepare cosine similarity matrix.
+    # prepare cosine similarity matrix. Finds the cos(theta) between vectors to find out how similar they are.
     sim_mat = np.zeros([len(embedded_sentences), len(embedded_sentences)])
     for i in range(len(embedded_sentences)):
         for j in range(len(embedded_sentences)):
@@ -71,14 +71,14 @@ for row in x.itertuples(): # each row contains data for a article.
                 sim_mat[i][j]=cosine_similarity(embedded_sentences[i].reshape(1,100),embedded_sentences[j].reshape(1,100))[0,0] 
 
     nx_graph = nx.from_numpy_array(sim_mat)
-    scores = nx.pagerank(nx_graph)
+    scores = nx.pagerank(nx_graph) # scores each sentence of the article based on pagerank algorithm.
     
     sorted_scores=set()
     for i,s in enumerate(clean_sentences):
         s_c=scores[i]
         sorted_scores.add((s_c,s))
         
-    m=sorted(sorted_scores,reverse=True)  
+    m=sorted(sorted_scores,reverse=True) # sort scores from highest to lowest.  
     for i in range(6): # 6 represents top 6 sentences.
         print(m[i][1],'\n')  
     print('#################################') # end of each article's summary.       
