@@ -81,6 +81,7 @@ for row in x.itertuples(): # each row contains data for a article.
     m=sorted(sorted_scores,reverse=True)  
     for i in range(6): # 6 represents top 6 sentences.
         print(m[i][1],'\n')  
+    print('#################################') # end of each article's summary.       
         
                 
                      
